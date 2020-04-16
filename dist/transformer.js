@@ -42,10 +42,10 @@ function runTransformer(program) {
                         transpiledJs = transpiledJs.substr(0, transpiledJs.length - 1);
                     }
                     var result = eval("(" + transpiledJs + ")()");
-                    if (utils.isVariableDeclaration(node.parent) || utils.isExportAssignment(node.parent)) {
-                        return ts.createStringLiteral(result);
+                    if (typeof result === "object" || typeof result === "function" || result == null) {
+                        throw new Error("compiletime only supports primitive, non-null values");
                     }
-                    return ts.createStringLiteral(""); // TODO: delete node (return undefined not working)
+                    return ts.createLiteral(result);
                 }
             }
         }
