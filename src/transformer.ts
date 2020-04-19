@@ -27,6 +27,33 @@ function shouldAddCurrentWorkingDirectoryPath(baseUrl: ts.CompilerOptions["baseU
   return !(worksOnUnix || worksOnWindows);
 };
 
+function createObjectLiteral(object: any): ts.ObjectLiteralExpression {
+  const props = Object.keys(object)
+    .filter(key => object[key] !== undefined)
+    .map(key => ts.createPropertyAssignment(key, createExpression(object[key])))
+  return ts.createObjectLiteral(props, true)
+}
+
+function createExpression(thing: any): ts.Expression {
+  if (thing === undefined) {
+    return ts.createVoidZero();
+  } else if (thing === null) {
+    return ts.createNull();
+  } else if (typeof thing === "boolean") {
+    return ts.createLiteral(thing);
+  } else if (typeof thing === "number") {
+    return ts.createNumericLiteral(String(thing));
+  } else if (typeof thing === "string") {
+    return ts.createStringLiteral(thing);
+  } else if (Array.isArray(thing)) {
+    return ts.createArrayLiteral(thing.map(element => createExpression(element)), true);
+  } else if (typeof thing === "object") {
+    return createObjectLiteral(thing);
+  } else {
+    throw new Error(`war3-transformer: Don't know how to turn a ${thing} into an AST expression.`);
+  }
+}
+
 export default function runTransformer(program: ts.Program): ts.TransformerFactory<ts.Node> {
   const checker = program.getTypeChecker();
 
@@ -46,13 +73,15 @@ export default function runTransformer(program: ts.Program): ts.TransformerFacto
           let transpiledJs = ts.transpile(codeBlock).trimRight();
 
           if (transpiledJs[transpiledJs.length - 1] === ";") {
-            transpiledJs = transpiledJs.substr(0, transpiledJs.length - 1)
+            transpiledJs = transpiledJs.substr(0, transpiledJs.length - 1);
           }
 
           const result = eval(`(${transpiledJs})()`);
 
-          if (typeof result === "object" || typeof result === "function" || result == null) {
-            throw new Error(`compiletime only supports primitive, non-null values`)
+          if (typeof result === "object") {
+            return createObjectLiteral(result);
+          } else if (typeof result === "function" || result == null) {
+            throw new Error(`compiletime only supports primitive, non-null values`);
           }
 
           return ts.createLiteral(result);
