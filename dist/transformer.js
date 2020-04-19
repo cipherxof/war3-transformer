@@ -24,6 +24,38 @@ function shouldAddCurrentWorkingDirectoryPath(baseUrl) {
     return !(worksOnUnix || worksOnWindows);
 }
 ;
+function createObjectLiteral(object) {
+    var props = Object.keys(object)
+        .filter(function (key) { return object[key] !== undefined; })
+        .map(function (key) { return ts.createPropertyAssignment(key, createExpression(object[key])); });
+    return ts.createObjectLiteral(props, true);
+}
+function createExpression(thing) {
+    if (thing === undefined) {
+        return ts.createVoidZero();
+    }
+    else if (thing === null) {
+        return ts.createNull();
+    }
+    else if (typeof thing === "boolean") {
+        return ts.createLiteral(thing);
+    }
+    else if (typeof thing === "number") {
+        return ts.createNumericLiteral(String(thing));
+    }
+    else if (typeof thing === "string") {
+        return ts.createStringLiteral(thing);
+    }
+    else if (Array.isArray(thing)) {
+        return ts.createArrayLiteral(thing.map(function (element) { return createExpression(element); }), true);
+    }
+    else if (typeof thing === "object") {
+        return createObjectLiteral(thing);
+    }
+    else {
+        throw new Error("war3-transformer: Don't know how to turn a " + thing + " into an AST expression.");
+    }
+}
 function runTransformer(program) {
     var checker = program.getTypeChecker();
     function processNode(node, file) {
@@ -42,7 +74,10 @@ function runTransformer(program) {
                         transpiledJs = transpiledJs.substr(0, transpiledJs.length - 1);
                     }
                     var result = eval("(" + transpiledJs + ")()");
-                    if (typeof result === "object" || typeof result === "function" || result == null) {
+                    if (typeof result === "object") {
+                        return createObjectLiteral(result);
+                    }
+                    else if (typeof result === "function" || result == null) {
                         throw new Error("compiletime only supports primitive, non-null values");
                     }
                     return ts.createLiteral(result);
