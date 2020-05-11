@@ -2,6 +2,9 @@ import * as nodePath from "path";
 import { createMatchPath } from "tsconfig-paths";
 import * as utils from "tsutils";
 import * as ts from "typescript";
+import * as fs from "fs";
+
+const cwd = process.cwd();
 
 require.extensions[".ts"] = require.extensions[".js"];
 require.extensions[".tsx"] = require.extensions[".js"];
@@ -9,6 +12,19 @@ require.extensions[".tsx"] = require.extensions[".js"];
 let absoluteBaseUrl;
 let compilerOptions;
 let matchPathFunc;
+let compileTimeScript = "";
+let compileTimeContext;
+
+if (fs.existsSync("./scripts/compiletime.ts")) {
+  compileTimeScript = ts.transpile(fs.readFileSync("./scripts/compiletime.ts", "utf8"));
+} else if (fs.existsSync("./compiletime.ts")) {
+  compileTimeScript = ts.transpile(fs.readFileSync("./compiletime.ts", "utf8"));
+}
+
+if (compileTimeScript !== "") { // todo: load module from memory
+  fs.writeFileSync("./compiletime.js", compileTimeScript);
+  compileTimeContext = require(`${cwd}/compiletime`).default;
+}
 
 function getModuleSpecifierValue(specifier: ts.Expression) {
   return specifier.getText().substr(specifier.getLeadingTriviaWidth(), specifier.getWidth() - specifier.getLeadingTriviaWidth() * 2);
@@ -70,21 +86,24 @@ export default function runTransformer(program: ts.Program): ts.TransformerFacto
         if (funcName === "compiletime") {
           const argument = node.arguments[0];
           const codeBlock = argument.getFullText();
+
           let transpiledJs = ts.transpile(codeBlock).trimRight();
 
           if (transpiledJs[transpiledJs.length - 1] === ";") {
             transpiledJs = transpiledJs.substr(0, transpiledJs.length - 1);
           }
 
-          const result = eval(`(${transpiledJs})()`);
+          const body = `(${transpiledJs})`;
+          const wrap = s => `{ return (${body}) };`
+          const func = new Function(wrap(body));
+          const result = func.call(null).call(null, compileTimeContext);
 
-          if (typeof result === "object") {
-            return createObjectLiteral(result);
-          } else if (typeof result === "function" || result == null) {
-            throw new Error(`compiletime only supports primitive, non-null values`);
+          if (typeof result === "function" || result == null) {
+            return undefined;
+            //throw new Error(`compiletime only supports primitive, non-null values`);
           }
 
-          return ts.createLiteral(result);
+          return createExpression(result);
         }
       }
     } else if (utils.isImportDeclaration(node)) {
@@ -103,6 +122,7 @@ export default function runTransformer(program: ts.Program): ts.TransformerFacto
 
       const newNode = ts.getMutableClone(node);
       const replacePath = nodePath.relative(sourceFilePath, matchedPath).replace(/\\/g, "/");
+
       newNode.moduleSpecifier = ts.createLiteral(isPathRelative(replacePath) ? replacePath : `./${replacePath}`);
 
       return newNode;
