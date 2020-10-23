@@ -103,7 +103,9 @@ export default function runTransformer(program: ts.Program): ts.TransformerFacto
 
       const newNode = ts.getMutableClone(node);
       const replacePath = nodePath.relative(sourceFilePath, matchedPath).replace(/\\/g, "/");
-      newNode.moduleSpecifier = ts.createLiteral(isPathRelative(replacePath) ? replacePath : `./${replacePath}`);
+
+      //@ts-ignore
+      newNode.moduleSpecifier = ts.createLiteral(isPathRelative(replacePath) ? replacePath : `./${replacePath}`); // readonly in typescript 4.0.3?
 
       return newNode;
     }
