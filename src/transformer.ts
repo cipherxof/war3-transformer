@@ -2,6 +2,7 @@ import * as nodePath from "path";
 import { createMatchPath } from "tsconfig-paths";
 import * as utils from "tsutils";
 import * as ts from "typescript";
+import { loadObjectData, saveObjectData } from './objectdata';
 
 require.extensions[".ts"] = require.extensions[".js"];
 require.extensions[".tsx"] = require.extensions[".js"];
@@ -54,8 +55,15 @@ function createExpression(thing: any): ts.Expression {
   }
 }
 
-export default function runTransformer(program: ts.Program): ts.TransformerFactory<ts.Node> {
+interface TransformerOptions {
+  mapDir: string;
+  entryFile: string;
+  outputDir: string;
+}
+
+export default function runTransformer(program: ts.Program, options: TransformerOptions): ts.TransformerFactory<ts.Node> {
   const checker = program.getTypeChecker();
+  const objectData = loadObjectData(options.mapDir);
 
   function processNode(node: ts.Node, file: ts.SourceFile): ts.Node | undefined {
     if (utils.isCallExpression(node)) {
@@ -154,7 +162,14 @@ export default function runTransformer(program: ts.Program): ts.TransformerFacto
 
         return ts.updateBundle(node, newFiles);
       } else if (ts.isSourceFile(node)) {
-        return processAndUpdateSourceFile(context, node);
+        const tsFile = processAndUpdateSourceFile(context, node);
+
+        // If this is the entry file, and thus the last file to be processed, save modified object data.
+        if (options.entryFile && options.outputDir && nodePath.relative(node.fileName, options.entryFile).length === 0) {
+          saveObjectData(objectData, options.outputDir);
+        }
+
+        return tsFile;
       }
     } catch (e) {
       console.error(e);
