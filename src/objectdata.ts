@@ -35,13 +35,13 @@ export function loadObjectData(mapDir?: string) {
 
   // Items data.
   const itemData = new MappedData();
-  itemData.load(readTextFile('objectdata/itemdata.slk'));
-  itemData.load(readTextFile('objectdata/itemfunc.txt'));
-  itemData.load(readTextFile('objectdata/itemskin.txt'));
-  itemData.load(readTextFile('objectdata/itemabilityfunc.txt'));
-  itemData.load(readTextFile('objectdata/locale/itemabilitystrings.txt'));
-  itemData.load(readTextFile('objectdata/locale/itemskinstrings.txt'));
-  itemData.load(readTextFile('objectdata/locale/itemstrings.txt'));
+  itemData.load(readTextFile('itemdata.slk'));
+  itemData.load(readTextFile('itemfunc.txt'));
+  itemData.load(readTextFile('itemskin.txt'));
+  itemData.load(readTextFile('itemabilityfunc.txt'));
+  itemData.load(readTextFile('locale/itemabilitystrings.txt'));
+  itemData.load(readTextFile('locale/itemskinstrings.txt'));
+  itemData.load(readTextFile('locale/itemstrings.txt'));
 
   const objectData = new ObjectData(unitAndItemMeta, unitData, itemData);
 
