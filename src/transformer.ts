@@ -84,7 +84,7 @@ export default function runTransformer(program: ts.Program, options: Transformer
             transpiledJs = transpiledJs.substr(0, transpiledJs.length - 1);
           }
 
-          const result = eval(`(${transpiledJs})()`);
+          const result = eval(`(${transpiledJs})`)({ objectData, log: console.log });
 
           if (typeof result === "object") {
             return createObjectLiteral(result);
