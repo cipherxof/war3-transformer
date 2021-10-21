@@ -5,10 +5,11 @@ var fs_1 = require("fs");
 var mappeddata_1 = require("mdx-m3-viewer/dist/cjs/utils/mappeddata");
 var objectdata_1 = require("mdx-m3-viewer/dist/cjs/utils/w3x/objectdata/objectdata");
 var file_1 = require("mdx-m3-viewer/dist/cjs/parsers/w3x/w3u/file");
+var path = require("path");
 function readTextFile(name) {
     // Using __dirname allows the file reads below to be relative to the transformer repo and not the repo using it (e.g. wc3-ts-template).
     // It might be nicer to import these files statically via some file loader - not sure, because there's A LOT of text data.
-    return (0, fs_1.readFileSync)(__dirname + '../objectdata/' + name).toString();
+    return (0, fs_1.readFileSync)(path.join(__dirname, '../objectdata/' + name)).toString();
 }
 function loadObjectData(mapDir) {
     // Field names for units and items.
@@ -20,7 +21,6 @@ function loadObjectData(mapDir) {
     unitData.load(readTextFile('unitbalance.slk'));
     unitData.load(readTextFile('unitabilities.slk'));
     unitData.load(readTextFile('unitskin.txt'));
-    unitData.load(readTextFile('unitskinstrings.txt'));
     unitData.load(readTextFile('unitui.slk'));
     unitData.load(readTextFile('unitweapons.slk'));
     unitData.load(readTextFile('unitweaponsfunc.txt'));
