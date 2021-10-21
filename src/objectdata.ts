@@ -25,6 +25,11 @@ export function loadObjectData(mapDir?: string) {
   unitData.load(readTextFile('unitweapons.slk'));
   unitData.load(readTextFile('unitweaponsfunc.txt'));
   unitData.load(readTextFile('unitweaponsskin.txt'));
+  unitData.load(readTextFile('humanunitfunc.txt'));
+  unitData.load(readTextFile('orcunitfunc.txt'));
+  unitData.load(readTextFile('undeadunitfunc.txt'));
+  unitData.load(readTextFile('nightelfunitfunc.txt'));
+  unitData.load(readTextFile('neutralunitfunc.txt'));
   unitData.load(readTextFile('locale/humanunitstrings.txt'));
   unitData.load(readTextFile('locale/orcunitstrings.txt'));
   unitData.load(readTextFile('locale/undeadunitstrings.txt'));
