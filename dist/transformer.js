@@ -4,6 +4,7 @@ var nodePath = require("path");
 var tsconfig_paths_1 = require("tsconfig-paths");
 var utils = require("tsutils");
 var ts = require("typescript");
+var objectdata_1 = require("./objectdata");
 require.extensions[".ts"] = require.extensions[".js"];
 require.extensions[".tsx"] = require.extensions[".js"];
 var absoluteBaseUrl;
@@ -56,8 +57,9 @@ function createExpression(thing) {
         throw new Error("war3-transformer: Don't know how to turn a " + thing + " into an AST expression.");
     }
 }
-function runTransformer(program) {
+function runTransformer(program, options) {
     var checker = program.getTypeChecker();
+    var objectData = (0, objectdata_1.loadObjectData)(options.mapDir);
     function processNode(node, file) {
         if (utils.isCallExpression(node)) {
             var signature = checker.getResolvedSignature(node);
@@ -73,7 +75,7 @@ function runTransformer(program) {
                     if (transpiledJs[transpiledJs.length - 1] === ";") {
                         transpiledJs = transpiledJs.substr(0, transpiledJs.length - 1);
                     }
-                    var result = eval("(" + transpiledJs + ")()");
+                    var result = eval("(" + transpiledJs + ")")({ objectData: objectData, log: console.log });
                     if (typeof result === "object") {
                         return createObjectLiteral(result);
                     }
@@ -96,7 +98,8 @@ function runTransformer(program) {
             }
             var newNode = ts.getMutableClone(node);
             var replacePath = nodePath.relative(sourceFilePath, matchedPath).replace(/\\/g, "/");
-            newNode.moduleSpecifier = ts.createLiteral(isPathRelative(replacePath) ? replacePath : "./" + replacePath);
+            //@ts-ignore
+            newNode.moduleSpecifier = ts.createLiteral(isPathRelative(replacePath) ? replacePath : "./" + replacePath); // readonly in typescript 4.0.3?
             return newNode;
         }
         return;
@@ -120,14 +123,19 @@ function runTransformer(program) {
         absoluteBaseUrl = shouldAddCurrentWorkingDirectoryPath(compilerOptions.baseUrl)
             ? nodePath.join(process.cwd(), compilerOptions.baseUrl || ".")
             : compilerOptions.baseUrl || ".";
-        matchPathFunc = tsconfig_paths_1.createMatchPath(absoluteBaseUrl, compilerOptions.paths || {});
+        matchPathFunc = (0, tsconfig_paths_1.createMatchPath)(absoluteBaseUrl, compilerOptions.paths || {});
         try {
             if (ts.isBundle(node)) {
                 var newFiles = node.sourceFiles.map(function (file) { return processAndUpdateSourceFile(context, file); });
                 return ts.updateBundle(node, newFiles);
             }
             else if (ts.isSourceFile(node)) {
-                return processAndUpdateSourceFile(context, node);
+                var tsFile = processAndUpdateSourceFile(context, node);
+                // If this is the entry file, and thus the last file to be processed, save modified object data.
+                if (options.entryFile && options.outputDir && nodePath.relative(node.fileName, options.entryFile).length === 0) {
+                    (0, objectdata_1.saveObjectData)(objectData, options.outputDir);
+                }
+                return tsFile;
             }
         }
         catch (e) {
