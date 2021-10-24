@@ -3,6 +3,7 @@ import { createMatchPath } from "tsconfig-paths";
 import * as utils from "tsutils";
 import * as ts from "typescript";
 import { loadObjectData, saveObjectData } from './objectdata';
+import { stringToBase256 } from 'mdx-m3-viewer/dist/cjs/common/typecast';
 
 require.extensions[".ts"] = require.extensions[".js"];
 require.extensions[".tsx"] = require.extensions[".js"];
@@ -84,7 +85,7 @@ export default function runTransformer(program: ts.Program, options: Transformer
             transpiledJs = transpiledJs.substr(0, transpiledJs.length - 1);
           }
 
-          const result = eval(`(${transpiledJs})`)({ objectData, log: console.log });
+          const result = eval(`(${transpiledJs})`)({ objectData, fourCC: stringToBase256, log: console.log });
 
           if (typeof result === "object") {
             return createObjectLiteral(result);
