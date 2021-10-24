@@ -8,7 +8,10 @@ declare interface CompiletimeContext {
   log: (...any: any) => void;
 }
 
+declare type CompiletimeReturnType = object | string | number | boolean;
+
+declare type CompiletimeFunction = (ctx: CompiletimeContext) => CompiletimeReturnType;
 /**
- * @param any Expression to be evaluated by Node.
+ * @param fn Expression to be evaluated by Node.
  */
-declare function compiletime(ctx: CompiletimeContext): object | string | number | boolean;
+declare function compiletime(fn: CompiletimeFunction): CompiletimeReturnType;
