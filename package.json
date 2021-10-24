@@ -1,6 +1,6 @@
 {
   "name": "war3-transformer",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "description": "Transformer for Warcraft III maps using TypeScript.",
   "main": "dist/transformer.js",
   "scripts": {
@@ -11,10 +11,11 @@
   "license": "MIT",
   "url": "https://github.com/cipherxof/war3-transformer",
   "dependencies": {
-    "mdx-m3-viewer": "^5.10.10",
+    "mdx-m3-viewer": "^5.11.3",
     "tsconfig-paths": "^3.9.0",
     "tsutils": "^3.17.1",
-    "typescript": "^4.0.5"
+    "typescript": "^4.0.5",
+    "war3-objectdata": "^0.1.3"
   },
   "devDependencies": {
     "@types/node": "^13.13.28"

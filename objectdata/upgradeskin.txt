@@ -1,4 +1,0 @@
-[BP001]
-skinType=upgrade
-Hamg=Samg
-Hamg_Avail=Samg,Sjai
