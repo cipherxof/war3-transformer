@@ -1,11 +1,17 @@
 /** @noSelfInFile * */
 
-interface CompiletimeContext {
-  objectData: unknown;
+declare type ObjectData = import('war3-objectdata').ObjectData;
+
+declare interface CompiletimeContext {
+  objectData: ObjectData;
+  fourCC: (id: string) => number;
   log: (...any: any) => void;
 }
 
- /**
-  * @param any Expression to be evaluated by Node.
-  */
- declare function compiletime(ctx: CompiletimeContext): any;
+declare type CompiletimeReturnType = object | string | number | boolean;
+
+declare type CompiletimeFunction = (ctx: CompiletimeContext) => CompiletimeReturnType;
+/**
+ * @param fn Expression to be evaluated by Node.
+ */
+declare function compiletime(fn: CompiletimeFunction): CompiletimeReturnType;
