@@ -80,8 +80,11 @@ function runTransformer(program, options) {
                     if (typeof result === "object") {
                         return createObjectLiteral(result);
                     }
-                    else if (typeof result === "function" || result == null) {
-                        throw new Error("compiletime only supports primitive, non-null values");
+                    else if (result === undefined || result === null) {
+                        return createExpression(result);
+                    }
+                    else if (typeof result === "function") {
+                        throw new Error("compiletime only supports primitive values");
                     }
                     return ts.createLiteral(result);
                 }
