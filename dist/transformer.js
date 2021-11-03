@@ -5,6 +5,7 @@ var tsconfig_paths_1 = require("tsconfig-paths");
 var utils = require("tsutils");
 var ts = require("typescript");
 var objectdata_1 = require("./objectdata");
+var typecast_1 = require("mdx-m3-viewer/dist/cjs/common/typecast");
 require.extensions[".ts"] = require.extensions[".js"];
 require.extensions[".tsx"] = require.extensions[".js"];
 var absoluteBaseUrl;
@@ -75,7 +76,7 @@ function runTransformer(program, options) {
                     if (transpiledJs[transpiledJs.length - 1] === ";") {
                         transpiledJs = transpiledJs.substr(0, transpiledJs.length - 1);
                     }
-                    var result = eval("(" + transpiledJs + ")")({ objectData: objectData, log: console.log });
+                    var result = eval("(" + transpiledJs + ")")({ objectData: objectData, fourCC: typecast_1.stringToBase256, log: console.log });
                     if (typeof result === "object") {
                         return createObjectLiteral(result);
                     }

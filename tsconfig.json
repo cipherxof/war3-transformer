@@ -6,7 +6,7 @@
       "es6",
       "dom"
     ],
-    "moduleResolution": "node",
+    "moduleResolution": "node"
   },
   "include": [
     "./src"
