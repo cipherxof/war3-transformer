@@ -8,7 +8,7 @@ declare interface CompiletimeContext {
   log: (...any: any) => void;
 }
 
-declare type CompiletimeReturnType = object | string | number | boolean | undefined | null;
+declare type CompiletimeReturnType = object | string | number | boolean | undefined | null | void;
 
 declare type CompiletimeFunction = (ctx: CompiletimeContext) => CompiletimeReturnType;
 /**

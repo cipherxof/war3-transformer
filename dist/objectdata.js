@@ -4,7 +4,7 @@ exports.saveObjectData = exports.loadObjectData = void 0;
 var fs_1 = require("fs");
 var file_1 = require("mdx-m3-viewer/dist/cjs/parsers/w3x/w3d/file");
 var file_2 = require("mdx-m3-viewer/dist/cjs/parsers/w3x/w3u/file");
-var war3_objectdata_1 = require("war3-objectdata");
+var cjs_1 = require("war3-objectdata/dist/cjs");
 function loadFile(path, ContainerClass) {
     if ((0, fs_1.existsSync)(path)) {
         var file = new ContainerClass();
@@ -13,7 +13,7 @@ function loadFile(path, ContainerClass) {
     }
 }
 function loadObjectData(mapDir) {
-    var objectData = new war3_objectdata_1.ObjectData();
+    var objectData = new cjs_1.ObjectData();
     if (mapDir) {
         var mapFiles = {};
         // Load in the map unit modifications if it has any.

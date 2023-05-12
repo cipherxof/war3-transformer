@@ -6,7 +6,11 @@
       "es6",
       "dom"
     ],
-    "moduleResolution": "node"
+    "moduleResolution": "node",
+    "paths": {
+      "war3-objectdata/*": ["./node_modules/war3-objectdata-th/*"],
+      "mdx-m3-viewer/*": ["./node_modules/mdx-m3-viewer-th/*"]
+    },
   },
   "include": [
     "./src"
