@@ -1,6 +1,6 @@
 {
   "name": "war3-transformer",
-  "version": "3.0.1",
+  "version": "3.0.2",
   "description": "Transformer for Warcraft III maps using TypeScript.",
   "main": "dist/transformer.js",
   "scripts": {
@@ -15,7 +15,7 @@
     "tsconfig-paths": "^3.9.0",
     "tsutils": "^3.21.0",
     "typescript": "5.0.4",
-    "war3-objectdata-th": "^0.2.4"
+    "war3-objectdata-th": "^0.2.5"
   },
   "devDependencies": {
     "@types/node": "^13.13.52"
