@@ -1,7 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var nodePath = require("path");
-var tsconfig_paths_1 = require("tsconfig-paths");
 var utils = require("tsutils");
 var ts = require("typescript");
 var objectdata_1 = require("./objectdata");
@@ -10,13 +9,6 @@ require.extensions[".ts"] = require.extensions[".js"];
 require.extensions[".tsx"] = require.extensions[".js"];
 var absoluteBaseUrl;
 var compilerOptions;
-var matchPathFunc;
-function getModuleSpecifierValue(specifier) {
-    return specifier.getText().substr(specifier.getLeadingTriviaWidth(), specifier.getWidth() - specifier.getLeadingTriviaWidth() * 2);
-}
-function isPathRelative(path) {
-    return path.startsWith("./") || path.startsWith("../");
-}
 function shouldAddCurrentWorkingDirectoryPath(baseUrl) {
     if (!baseUrl) {
         return true;
@@ -25,43 +17,44 @@ function shouldAddCurrentWorkingDirectoryPath(baseUrl) {
     var worksOnWindows = new RegExp("^[A-Z]:/").test(baseUrl);
     return !(worksOnUnix || worksOnWindows);
 }
-;
-function createObjectLiteral(object) {
+function createObjectLiteral(object, context) {
     var props = Object.keys(object)
         .filter(function (key) { return object[key] !== undefined; })
-        .map(function (key) { return ts.createPropertyAssignment(key, createExpression(object[key])); });
-    return ts.createObjectLiteral(props, true);
+        .map(function (key) {
+        return context.factory.createPropertyAssignment(key, createExpression(object[key], context));
+    });
+    return context.factory.createObjectLiteralExpression(props, true);
 }
-function createExpression(thing) {
+function createExpression(thing, context) {
     if (thing === undefined) {
-        return ts.createVoidZero();
+        return context.factory.createVoidZero();
     }
     else if (thing === null) {
-        return ts.createNull();
+        return context.factory.createNull();
     }
     else if (typeof thing === "boolean") {
-        return ts.createLiteral(thing);
+        return thing ? ts.factory.createTrue() : ts.factory.createFalse();
     }
     else if (typeof thing === "number") {
-        return ts.createNumericLiteral(String(thing));
+        return context.factory.createNumericLiteral(String(thing));
     }
     else if (typeof thing === "string") {
-        return ts.createStringLiteral(thing);
+        return context.factory.createStringLiteral(thing);
     }
     else if (Array.isArray(thing)) {
-        return ts.createArrayLiteral(thing.map(function (element) { return createExpression(element); }), true);
+        return context.factory.createArrayLiteralExpression(thing.map(function (element) { return createExpression(element, context); }), true);
     }
     else if (typeof thing === "object") {
-        return createObjectLiteral(thing);
+        return createObjectLiteral(thing, context);
     }
     else {
-        throw new Error("war3-transformer: Don't know how to turn a " + thing + " into an AST expression.");
+        throw new Error("war3-transformer: Don't know how to turn a ".concat(typeof thing, " into an AST expression."));
     }
 }
 function runTransformer(program, options) {
     var checker = program.getTypeChecker();
     var objectData = (0, objectdata_1.loadObjectData)(options.mapDir);
-    function processNode(node, file) {
+    function processNode(node, file, context) {
         if (utils.isCallExpression(node)) {
             var signature = checker.getResolvedSignature(node);
             var decl = signature.declaration;
@@ -76,41 +69,20 @@ function runTransformer(program, options) {
                     if (transpiledJs[transpiledJs.length - 1] === ";") {
                         transpiledJs = transpiledJs.substr(0, transpiledJs.length - 1);
                     }
-                    var result = eval("(" + transpiledJs + ")")({ objectData: objectData, fourCC: typecast_1.stringToBase256, log: console.log });
-                    if (typeof result === "object") {
-                        return createObjectLiteral(result);
-                    }
-                    else if (result === undefined || result === null) {
-                        return createExpression(result);
-                    }
-                    else if (typeof result === "function") {
-                        throw new Error("compiletime only supports primitive values");
-                    }
-                    return ts.createLiteral(result);
+                    var result = eval("(".concat(transpiledJs, ")"))({
+                        objectData: objectData,
+                        fourCC: typecast_1.stringToBase256,
+                        log: console.log,
+                    });
+                    return createExpression(result, context);
                 }
             }
-        }
-        else if (utils.isImportDeclaration(node)) {
-            if (!node.moduleSpecifier || !node.moduleSpecifier.getSourceFile()) {
-                return node;
-            }
-            var sourceFilePath = nodePath.dirname(file.fileName);
-            var specifierValue = getModuleSpecifierValue(node.moduleSpecifier);
-            var matchedPath = matchPathFunc(specifierValue);
-            if (!matchedPath) {
-                return node;
-            }
-            var newNode = ts.getMutableClone(node);
-            var replacePath = nodePath.relative(sourceFilePath, matchedPath).replace(/\\/g, "/");
-            //@ts-ignore
-            newNode.moduleSpecifier = ts.createLiteral(isPathRelative(replacePath) ? replacePath : "./" + replacePath); // readonly in typescript 4.0.3?
-            return newNode;
         }
         return;
     }
     function processSourceFile(context, file) {
         function visitor(node) {
-            var newNode = processNode(node, file);
+            var newNode = processNode(node, file, context);
             if (newNode != undefined) {
                 return newNode;
             }
@@ -120,23 +92,26 @@ function runTransformer(program, options) {
     }
     function processAndUpdateSourceFile(context, file) {
         var updatedNode = processSourceFile(context, file);
-        return ts.updateSourceFileNode(file, updatedNode.statements, updatedNode.isDeclarationFile, updatedNode.referencedFiles, updatedNode.typeReferenceDirectives, updatedNode.hasNoDefaultLib);
+        return context.factory.updateSourceFile(file, updatedNode.statements, updatedNode.isDeclarationFile, updatedNode.referencedFiles, updatedNode.typeReferenceDirectives, updatedNode.hasNoDefaultLib);
     }
     return function (context) { return function (node) {
         compilerOptions = context.getCompilerOptions();
         absoluteBaseUrl = shouldAddCurrentWorkingDirectoryPath(compilerOptions.baseUrl)
             ? nodePath.join(process.cwd(), compilerOptions.baseUrl || ".")
             : compilerOptions.baseUrl || ".";
-        matchPathFunc = (0, tsconfig_paths_1.createMatchPath)(absoluteBaseUrl, compilerOptions.paths || {});
         try {
             if (ts.isBundle(node)) {
-                var newFiles = node.sourceFiles.map(function (file) { return processAndUpdateSourceFile(context, file); });
-                return ts.updateBundle(node, newFiles);
+                var newFiles = node.sourceFiles.map(function (file) {
+                    return processAndUpdateSourceFile(context, file);
+                });
+                return context.factory.updateBundle(node, newFiles);
             }
             else if (ts.isSourceFile(node)) {
                 var tsFile = processAndUpdateSourceFile(context, node);
                 // If this is the entry file, and thus the last file to be processed, save modified object data.
-                if (options.entryFile && options.outputDir && nodePath.relative(node.fileName, options.entryFile).length === 0) {
+                if (options.entryFile &&
+                    options.outputDir &&
+                    nodePath.relative(node.fileName, options.entryFile).length === 0) {
                     (0, objectdata_1.saveObjectData)(objectData, options.outputDir);
                 }
                 return tsFile;

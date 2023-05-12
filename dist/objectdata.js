@@ -17,22 +17,22 @@ function loadObjectData(mapDir) {
     if (mapDir) {
         var mapFiles = {};
         // Load in the map unit modifications if it has any.
-        var w3u = loadFile(mapDir + "/war3map.w3u", file_2.default);
+        var w3u = loadFile("".concat(mapDir, "/war3map.w3u"), file_2.default);
         if (w3u) {
             mapFiles.w3u = w3u;
         }
         // Load in the map item modifications if it has any.
-        var w3t = loadFile(mapDir + "/war3map.w3t", file_2.default);
+        var w3t = loadFile("".concat(mapDir, "/war3map.w3t"), file_2.default);
         if (w3t) {
             mapFiles.w3t = w3t;
         }
         // Load in the map destructable modifications if it has any.
-        var w3b = loadFile(mapDir + "/war3map.w3b", file_2.default);
+        var w3b = loadFile("".concat(mapDir, "/war3map.w3b"), file_2.default);
         if (w3b) {
             mapFiles.w3b = w3b;
         }
         // Load in the map doodad modifications if it has any.
-        var w3d = loadFile(mapDir + "/war3map.w3d", file_1.default);
+        var w3d = loadFile("".concat(mapDir, "/war3map.w3d"), file_1.default);
         if (w3d) {
             mapFiles.w3d = w3d;
         }
@@ -44,16 +44,16 @@ exports.loadObjectData = loadObjectData;
 function saveObjectData(objectData, outputDir) {
     var _a = objectData.save(), w3u = _a.w3u, w3t = _a.w3t, w3b = _a.w3b, w3d = _a.w3d;
     if (w3u) {
-        (0, fs_1.writeFileSync)(outputDir + "/war3map.w3u", w3u.save());
+        (0, fs_1.writeFileSync)("".concat(outputDir, "/war3map.w3u"), w3u.save());
     }
     if (w3t) {
-        (0, fs_1.writeFileSync)(outputDir + "/war3map.w3t", w3t.save());
+        (0, fs_1.writeFileSync)("".concat(outputDir, "/war3map.w3t"), w3t.save());
     }
     if (w3b) {
-        (0, fs_1.writeFileSync)(outputDir + "/war3map.w3b", w3b.save());
+        (0, fs_1.writeFileSync)("".concat(outputDir, "/war3map.w3b"), w3b.save());
     }
     if (w3d) {
-        (0, fs_1.writeFileSync)(outputDir + "/war3map.w3d", w3d.save());
+        (0, fs_1.writeFileSync)("".concat(outputDir, "/war3map.w3d"), w3d.save());
     }
 }
 exports.saveObjectData = saveObjectData;
