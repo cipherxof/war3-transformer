@@ -1,6 +1,6 @@
 {
   "name": "war3-transformer",
-  "version": "3.0.7",
+  "version": "3.0.8",
   "description": "Transformer for Warcraft III maps using TypeScript.",
   "main": "dist/transformer.js",
   "scripts": {
