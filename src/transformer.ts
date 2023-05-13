@@ -3,6 +3,7 @@ import { createMatchPath } from "tsconfig-paths";
 import * as utils from "tsutils";
 import * as ts from "typescript";
 import { loadObjectData, saveObjectData } from "./objectdata";
+import * as compileTimeObjects from "war3-objectdata-th/dist/cjs/generated";
 import { stringToBase256 } from "mdx-m3-viewer-th/dist/cjs/common/typecast";
 
 require.extensions[".ts"] = require.extensions[".js"];
@@ -26,6 +27,7 @@ function createObjectLiteral(
   object: any,
   context: ts.TransformationContext
 ): ts.ObjectLiteralExpression {
+  
   const props = Object.keys(object)
     .filter((key) => object[key] !== undefined)
     .map((key) =>
@@ -77,7 +79,7 @@ export default function runTransformer(
 ): ts.TransformerFactory<ts.Node> {
   const checker = program.getTypeChecker();
   const objectData = loadObjectData(options.mapDir);
-
+  
   function processNode(
     node: ts.Node,
     file: ts.SourceFile,
@@ -105,6 +107,15 @@ export default function runTransformer(
             objectData,
             fourCC: stringToBase256,
             log: console.log,
+            constants: {
+              abilities: compileTimeObjects.Abilities,
+              buffs: compileTimeObjects.Buffs,
+              destructables: compileTimeObjects.Destructables,
+              doodads: compileTimeObjects.Doodads,
+              items: compileTimeObjects.Items,
+              units: compileTimeObjects.Units,
+              upgrades: compileTimeObjects.Upgrades
+            }
           });
 
           return createExpression(result, context);

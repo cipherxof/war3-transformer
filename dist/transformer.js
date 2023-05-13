@@ -4,6 +4,7 @@ var nodePath = require("path");
 var utils = require("tsutils");
 var ts = require("typescript");
 var objectdata_1 = require("./objectdata");
+var compileTimeObjects = require("war3-objectdata-th/dist/cjs/generated");
 var typecast_1 = require("mdx-m3-viewer-th/dist/cjs/common/typecast");
 require.extensions[".ts"] = require.extensions[".js"];
 require.extensions[".tsx"] = require.extensions[".js"];
@@ -73,6 +74,15 @@ function runTransformer(program, options) {
                         objectData: objectData,
                         fourCC: typecast_1.stringToBase256,
                         log: console.log,
+                        constants: {
+                            abilities: compileTimeObjects.Abilities,
+                            buffs: compileTimeObjects.Buffs,
+                            destructables: compileTimeObjects.Destructables,
+                            doodads: compileTimeObjects.Doodads,
+                            items: compileTimeObjects.Items,
+                            units: compileTimeObjects.Units,
+                            upgrades: compileTimeObjects.Upgrades
+                        }
                     });
                     return createExpression(result, context);
                 }
