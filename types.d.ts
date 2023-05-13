@@ -3,13 +3,13 @@
 declare type ObjectData = import('war3-objectdata-th').ObjectData;
 
 declare type ConstantsType = {
-  abilities: any;
-  buffs: any;
-  destructables: any;
-  doodads: any;
-  items: any;
-  units: any;
-  upgrades: any;
+  abilities: import('war3-objectdata-th').Abilities;
+  buffs: import('war3-objectdata-th').Buffs;
+  destructables: import('war3-objectdata-th').Destructables;
+  doodads: import('war3-objectdata-th').Doodads;
+  items: import('war3-objectdata-th').Items;
+  units: import('war3-objectdata-th').Units;
+  upgrades: import('war3-objectdata-th').Upgrades;
 }
 
 declare interface CompiletimeContext {
