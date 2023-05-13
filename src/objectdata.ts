@@ -1,7 +1,7 @@
 import { readFileSync, existsSync, writeFileSync } from "fs";
-import War3MapW3d from "mdx-m3-viewer/dist/cjs/parsers/w3x/w3d/file";
-import War3MapW3u from "mdx-m3-viewer/dist/cjs/parsers/w3x/w3u/file";
-import { ObjectData, ModificationFiles } from "war3-objectdata/dist/cjs";
+import War3MapW3d from "mdx-m3-viewer-th/dist/cjs/parsers/w3x/w3d/file";
+import War3MapW3u from "mdx-m3-viewer-th/dist/cjs/parsers/w3x/w3u/file";
+import { ObjectData, ModificationFiles } from "war3-objectdata-th/dist/cjs";
 
 function loadFile(path: string, ContainerClass: typeof War3MapW3u | typeof War3MapW3d) {
   if (existsSync(path)) {

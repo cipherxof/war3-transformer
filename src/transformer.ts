@@ -3,7 +3,7 @@ import { createMatchPath } from "tsconfig-paths";
 import * as utils from "tsutils";
 import * as ts from "typescript";
 import { loadObjectData, saveObjectData } from "./objectdata";
-import { stringToBase256 } from "mdx-m3-viewer/dist/cjs/common/typecast";
+import { stringToBase256 } from "mdx-m3-viewer-th/dist/cjs/common/typecast";
 
 require.extensions[".ts"] = require.extensions[".js"];
 require.extensions[".tsx"] = require.extensions[".js"];

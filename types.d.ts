@@ -1,6 +1,6 @@
 /** @noSelfInFile * */
 
-declare type ObjectData = import('war3-objectdata').ObjectData;
+declare type ObjectData = import('war3-objectdata-th').ObjectData;
 
 declare interface CompiletimeContext {
   objectData: ObjectData;

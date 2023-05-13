@@ -2,9 +2,9 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.saveObjectData = exports.loadObjectData = void 0;
 var fs_1 = require("fs");
-var file_1 = require("mdx-m3-viewer/dist/cjs/parsers/w3x/w3d/file");
-var file_2 = require("mdx-m3-viewer/dist/cjs/parsers/w3x/w3u/file");
-var cjs_1 = require("war3-objectdata/dist/cjs");
+var file_1 = require("mdx-m3-viewer-th/dist/cjs/parsers/w3x/w3d/file");
+var file_2 = require("mdx-m3-viewer-th/dist/cjs/parsers/w3x/w3u/file");
+var cjs_1 = require("war3-objectdata-th/dist/cjs");
 function loadFile(path, ContainerClass) {
     if ((0, fs_1.existsSync)(path)) {
         var file = new ContainerClass();

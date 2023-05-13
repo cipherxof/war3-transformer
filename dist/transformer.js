@@ -4,7 +4,7 @@ var nodePath = require("path");
 var utils = require("tsutils");
 var ts = require("typescript");
 var objectdata_1 = require("./objectdata");
-var typecast_1 = require("mdx-m3-viewer/dist/cjs/common/typecast");
+var typecast_1 = require("mdx-m3-viewer-th/dist/cjs/common/typecast");
 require.extensions[".ts"] = require.extensions[".js"];
 require.extensions[".tsx"] = require.extensions[".js"];
 var absoluteBaseUrl;
