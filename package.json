@@ -16,7 +16,7 @@
     "tsconfig-paths": "^3.9.0",
     "tsutils": "^3.21.0",
     "typescript": "5.0.4",
-    "war3-objectdata-th": "^0.2.6"
+    "war3-objectdata-th": "^0.2.8"
   },
   "devDependencies": {
     "@types/node": "^13.13.52"
