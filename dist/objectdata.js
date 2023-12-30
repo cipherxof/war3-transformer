@@ -93,10 +93,10 @@ function saveObjectData(objectData, outputDir) {
         (0, fs_1.writeFileSync)("".concat(outputDir, "/war3mapSkin.w3d"), w3dSkin.save());
     }
     if (w3a) {
-        (0, fs_1.writeFileSync)("".concat(outputDir, "/war3map.w3d"), w3a.save());
+        (0, fs_1.writeFileSync)("".concat(outputDir, "/war3map.w3a"), w3a.save());
     }
     if (w3aSkin) {
-        (0, fs_1.writeFileSync)("".concat(outputDir, "/war3mapSkin.w3d"), w3aSkin.save());
+        (0, fs_1.writeFileSync)("".concat(outputDir, "/war3mapSkin.w3a"), w3aSkin.save());
     }
 }
 exports.saveObjectData = saveObjectData;

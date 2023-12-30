@@ -116,10 +116,10 @@ export function saveObjectData(objectData: ObjectData, outputDir: string) {
   }
 
   if (w3a) {
-    writeFileSync(`${outputDir}/war3map.w3d`, w3a.save());
+    writeFileSync(`${outputDir}/war3map.w3a`, w3a.save());
   }
 
   if (w3aSkin) {
-    writeFileSync(`${outputDir}/war3mapSkin.w3d`, w3aSkin.save());
+    writeFileSync(`${outputDir}/war3mapSkin.w3a`, w3aSkin.save());
   }
 }
