@@ -24,7 +24,7 @@ export function loadObjectData(mapDir?: string) {
     if (w3u) {
       mapFiles.w3u = w3u;
     }
-   
+
     const w3uSkin = loadFile(`${mapDir}/war3mapSkin.w3u`, War3MapW3u);
     if (w3uSkin) {
       mapFiles.w3uSkin = w3uSkin;
@@ -63,6 +63,17 @@ export function loadObjectData(mapDir?: string) {
       mapFiles.w3dSkin = w3dSkin;
     }
 
+    // Load in the map ability modifications if it has any.
+    const w3a = loadFile(`${mapDir}/war3map.w3a`, War3MapW3d);
+    if (w3a) {
+      mapFiles.w3a = w3a;
+    }
+
+    const w3aSkin = loadFile(`${mapDir}/war3mapSkin.w3a`, War3MapW3d);
+    if (w3aSkin) {
+      mapFiles.w3aSkin = w3aSkin;
+    }
+
     objectData.load(mapFiles);
   }
 
@@ -70,7 +81,7 @@ export function loadObjectData(mapDir?: string) {
 }
 
 export function saveObjectData(objectData: ObjectData, outputDir: string) {
-  const { w3u, w3t, w3b, w3d, w3uSkin, w3tSkin, w3bSkin, w3dSkin } = objectData.save();
+  const { w3u, w3t, w3b, w3d, w3uSkin, w3tSkin, w3bSkin, w3dSkin, w3a, w3aSkin } = objectData.save();
 
   if (w3u) {
     writeFileSync(`${outputDir}/war3map.w3u`, w3u.save());
@@ -102,5 +113,13 @@ export function saveObjectData(objectData: ObjectData, outputDir: string) {
 
   if (w3dSkin) {
     writeFileSync(`${outputDir}/war3mapSkin.w3d`, w3dSkin.save());
+  }
+
+  if (w3a) {
+    writeFileSync(`${outputDir}/war3map.w3d`, w3a.save());
+  }
+
+  if (w3aSkin) {
+    writeFileSync(`${outputDir}/war3mapSkin.w3d`, w3aSkin.save());
   }
 }
