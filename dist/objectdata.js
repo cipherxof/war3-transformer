@@ -52,13 +52,22 @@ function loadObjectData(mapDir) {
         if (w3dSkin) {
             mapFiles.w3dSkin = w3dSkin;
         }
+        // Load in the map ability modifications if it has any.
+        var w3a = loadFile("".concat(mapDir, "/war3map.w3a"), file_1.default);
+        if (w3a) {
+            mapFiles.w3a = w3a;
+        }
+        var w3aSkin = loadFile("".concat(mapDir, "/war3mapSkin.w3a"), file_1.default);
+        if (w3aSkin) {
+            mapFiles.w3aSkin = w3aSkin;
+        }
         objectData.load(mapFiles);
     }
     return objectData;
 }
 exports.loadObjectData = loadObjectData;
 function saveObjectData(objectData, outputDir) {
-    var _a = objectData.save(), w3u = _a.w3u, w3t = _a.w3t, w3b = _a.w3b, w3d = _a.w3d, w3uSkin = _a.w3uSkin, w3tSkin = _a.w3tSkin, w3bSkin = _a.w3bSkin, w3dSkin = _a.w3dSkin;
+    var _a = objectData.save(), w3u = _a.w3u, w3t = _a.w3t, w3b = _a.w3b, w3d = _a.w3d, w3uSkin = _a.w3uSkin, w3tSkin = _a.w3tSkin, w3bSkin = _a.w3bSkin, w3dSkin = _a.w3dSkin, w3a = _a.w3a, w3aSkin = _a.w3aSkin;
     if (w3u) {
         (0, fs_1.writeFileSync)("".concat(outputDir, "/war3map.w3u"), w3u.save());
     }
@@ -82,6 +91,12 @@ function saveObjectData(objectData, outputDir) {
     }
     if (w3dSkin) {
         (0, fs_1.writeFileSync)("".concat(outputDir, "/war3mapSkin.w3d"), w3dSkin.save());
+    }
+    if (w3a) {
+        (0, fs_1.writeFileSync)("".concat(outputDir, "/war3map.w3a"), w3a.save());
+    }
+    if (w3aSkin) {
+        (0, fs_1.writeFileSync)("".concat(outputDir, "/war3mapSkin.w3a"), w3aSkin.save());
     }
 }
 exports.saveObjectData = saveObjectData;
