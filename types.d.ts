@@ -21,8 +21,12 @@ declare interface CompiletimeContext {
 
 declare type CompiletimeReturnType = object | string | number | boolean | undefined | null | void;
 
-declare type CompiletimeFunction = (ctx: CompiletimeContext) => CompiletimeReturnType;
 /**
- * @param fn Expression to be evaluated by Node.
+ * Define a function that will be run on compile time in Node environment.
+ * It will also return any value that the function defined return
+ *
+ * @returns string | number | boolean | object | undefined | null
+ * @note Any other return type is considered never
  */
-declare function compiletime(fn: CompiletimeFunction): CompiletimeReturnType;
+declare function compiletime<T>(func: T): T extends (ctx: CompiletimeContext) => infer T ? (T extends () => any ? never : (T extends CompiletimeResult ? T : never)) : never;
+
