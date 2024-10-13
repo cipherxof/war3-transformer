@@ -19,7 +19,7 @@ declare interface CompiletimeContext {
   constants: ConstantsType;
 }
 
-declare type CompiletimeReturnType = object | string | number | boolean | undefined | null | void;
+declare type CompiletimeReturnType = object | string | number | boolean | undefined | null;
 
 /**
  * Define a function that will be run on compile time in Node environment.
