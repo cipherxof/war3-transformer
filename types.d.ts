@@ -28,5 +28,5 @@ declare type CompiletimeReturnType = object | string | number | boolean | undefi
  * @returns string | number | boolean | object | undefined | null
  * @note Any other return type is considered never
  */
-declare function compiletime<T>(func: T): T extends (ctx: CompiletimeContext) => infer T ? (T extends () => any ? never : (T extends CompiletimeResult ? T : never)) : never;
+declare function compiletime<T>(func: T): T extends (ctx: CompiletimeContext) => infer T ? (T extends () => any ? never : (T extends CompiletimeReturnType ? T : never)) : never;
 
