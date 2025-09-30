@@ -50,7 +50,7 @@ function createExpression(
   } else if (typeof thing === "boolean") {
     return thing ? ts.factory.createTrue() : ts.factory.createFalse();
   } else if (typeof thing === "number") {
-    return context.factory.createNumericLiteral(String(thing));
+      return createNumberExpression(thing);
   } else if (typeof thing === "string") {
     return context.factory.createStringLiteral(thing);
   } else if (Array.isArray(thing)) {
@@ -195,4 +195,20 @@ export default function runTransformer(
 
     return node;
   };
+}
+
+/**
+ * Taken from https://github.com/hey-api/openapi-ts/blob/91bc2d0074fdd9e1c3bf909a8cc96b8940155191/packages/openapi-ts/src/tsc/utils.ts#L134C1-L145
+ * Creates a numeric expression, handling negative numbers.
+ * Fixes error when using TypeScript 5.4.5+:
+ * `Negative numbers should be created in combination with createPrefixUnaryExpression`
+ */
+function createNumberExpression(value: number) {
+    if (value < 0) {
+        return ts.factory.createPrefixUnaryExpression(
+            ts.SyntaxKind.MinusToken,
+            ts.factory.createNumericLiteral(Math.abs(value)),
+        );
+    }
+    return ts.factory.createNumericLiteral(value);
 }
